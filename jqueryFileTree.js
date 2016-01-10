@@ -19,9 +19,14 @@
 //           collapseEasing - easing function to use on collapse (optional)
 //           multiFolder    - whether or not to limit the browser to one subfolder at a time
 //           loadMessage    - Message to display while initial tree loads (can be HTML)
+//           ajaxConnector  - When given, this method is called instead of calling serverside "script".
+//                            Thus a javascript layer can directly query and format a remote
+//                            directory content whitout the use of some server side script
+//                            (usefull for implementing a pure AJAX webdav connector by example).
 //
 // History:
 //
+// 1.02 - add "ajaxConnector" option (Kysic, 10 January 2016)
 // 1.01 - updated to work with foreign characters in directory/file names (12 April 2008)
 // 1.00 - released (24 March 2008)
 //
@@ -45,16 +50,22 @@ if(jQuery) (function($){
 			if( o.collapseEasing == undefined ) o.collapseEasing = null;
 			if( o.multiFolder == undefined ) o.multiFolder = true;
 			if( o.loadMessage == undefined ) o.loadMessage = 'Loading...';
+			if( o.ajaxConnector == undefined ) {
+			    o.ajaxConnector = function(t, connectorCallback) {
+					$.post(o.script, { dir: t }, connectorCallback);
+			    };
+			}
 			
 			$(this).each( function() {
-				
+
 				function showTree(c, t) {
 					$(c).addClass('wait');
 					$(".jqueryFileTree.start").remove();
-					$.post(o.script, { dir: t }, function(data) {
+					o.ajaxConnector(t, function(data) {
 						$(c).find('.start').html('');
 						$(c).removeClass('wait').append(data);
-						if( o.root == t ) $(c).find('UL:hidden').show(); else $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
+						if( o.root == t ) $(c).find('UL:hidden').show();
+						else $(c).find('UL:hidden').slideDown({ duration: o.expandSpeed, easing: o.expandEasing });
 						bindTree(c);
 					});
 				}
