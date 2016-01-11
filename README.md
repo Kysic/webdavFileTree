@@ -1,5 +1,5 @@
 # WebDAVFileTree
-Pure html/javascript example page to display the content of a remote webdav directory.
+Pure javascript lib able to display the content of a remote webdav directory on a html page.
 
 It's in fact just a connector between two existing HTML/javascript code :
  - jquery.fileTree from Cory LaViska available at http://www.abeautifulsite.net/jquery-file-tree/
