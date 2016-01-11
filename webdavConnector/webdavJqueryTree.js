@@ -6,6 +6,7 @@ var webdavJqueryTreeConnector = (function() {
     var client = new davlib.DavClient();
     var host, port, protocol, username, password;
     var debug = false;
+    var alertOnError = true;
 
     /**
         The constructor
@@ -64,6 +65,7 @@ var webdavJqueryTreeConnector = (function() {
         return function(status, statusstr, content) {
             if (status != 207) {
                 console.log('listDirCallback() - UnexpectedStatus :' + status + ' - ' + statusstr);
+                if (alertOnError) alert('Unable to listDir, unexpected server response : ' + status + ' - ' + statusstr);
                 connectorCallback('');
             } else {
                 if (debug) console.log('listDirCallback() - Content : ' + content);
@@ -86,7 +88,12 @@ var webdavJqueryTreeConnector = (function() {
 
     function listDir(dir, connectorCallback) {
         if (debug) console.log('listDir() : dir=' + dir);
-        client.PROPFIND(dir,  listDirCallback(dir, connectorCallback), null, 1);
+        try {
+            client.PROPFIND(dir,  listDirCallback(dir, connectorCallback), null, 1);
+        } catch (err) {
+            console.log(err);
+            if (alertOnError) alert('Unable to listDir, internal error : ' + err.name + " - " + err.message);
+        }
     }
 
     function openFile(file) {
