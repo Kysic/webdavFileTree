@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<title>jQuery File WebDAV Tree Demo</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		
+		<style type="text/css">
+			BODY,
+			HTML {
+				padding: 0px;
+				margin: 0px;
+			}
+			BODY {
+				font-family: Verdana, Arial, Helvetica, sans-serif;
+				font-size: 11px;
+				background: #EEE;
+				padding: 15px;
+			}
+			
+			H1 {
+				font-family: Georgia, serif;
+				font-size: 20px;
+				font-weight: normal;
+			}
+			
+			H2 {
+				font-family: Georgia, serif;
+				font-size: 16px;
+				font-weight: normal;
+				margin: 0px 0px 10px 0px;
+			}
+			
+			.example {
+				float: left;
+				margin: 15px;
+			}
+			
+			.demo {
+				width: 800px;
+				height: 400px;
+				border-top: solid 1px #BBB;
+				border-left: solid 1px #BBB;
+				border-bottom: solid 1px #FFF;
+				border-right: solid 1px #FFF;
+				background: #FFF;
+				overflow: scroll;
+				padding: 5px;
+			}
+			
+		</style>
+		
+		<script src="jquery.js" type="text/javascript"></script>
+		<script src="jquery.easing.js" type="text/javascript"></script>
+		<script src="jqueryFileTree.js" type="text/javascript"></script>
+		<script src="webdavConnector/davclient.js" type="text/javascript"></script>
+		<script src="webdavConnector/webdavJqueryTree.js" type="text/javascript"></script>
+		<link href="jqueryFileTree.css" rel="stylesheet" type="text/css" media="screen" />
+
+		<script type="text/javascript">
+			function initiateWebDavTree() {
+                var username = document.getElementById('webdavUser').value;
+                var password = document.getElementById('webdavPassword').value;
+                var root = document.getElementById('webdavRoot').value;
+                webdavJqueryTreeConnector.initialize(location.hostname, 443, 'https', username, password);
+				$('#fileTreeDemo').fileTree({
+                    root: root,
+                    folderEvent: 'click',
+                    expandSpeed: 750,
+                    collapseSpeed: 750,
+                    multiFolder: false,
+                    ajaxConnector: webdavJqueryTreeConnector.listDir
+                }, function(file) {
+                    webdavJqueryTreeConnector.openFile(file);
+			    });
+			};
+            
+            // Extraction of HTTP GET param from the query string
+            var QueryString = function () {
+              var query_string = {};
+              var query = window.location.search.substring(1);
+              var vars = query.split('&');
+              for (var i=0;i<vars.length;i++) {
+                var pair = vars[i].split('=');
+                if (typeof query_string[pair[0]] === "undefined") {
+                  query_string[pair[0]] = decodeURIComponent(pair[1]);
+                } else if (typeof query_string[pair[0]] === "string") {
+                  var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
+                  query_string[pair[0]] = arr;
+                } else {
+                  query_string[pair[0]].push(decodeURIComponent(pair[1]));
+                }
+              } 
+                return query_string;
+            }();
+
+            // Load get param from URL. 
+            $( document ).ready(function() {
+                if (QueryString.webdavUser) document.getElementById('webdavUser').value = QueryString.webdavUser;
+                if (QueryString.webdavRoot) document.getElementById('webdavRoot').value = QueryString.webdavRoot;
+                // If you want to indicate the webdav password in URL, be aware it s not safe.
+                // if (QueryString.webdavPassword) document.getElementById('webdavPassword').value = QueryString.webdavPassword;
+                if (QueryString.webdavUser && QueryString.webdavPassword && QueryString.webdavRoot) {
+                    initiateWebdavTree();
+                }
+            });
+		</script>
+    </head>
+	
+	<body>
+		
+		<h1>jQuery WebDAV File Tree Demo</h1>
+		<p>
+			Feel free to view the source code of this page to see how the file tree is being implemented.
+		</p>
+		
+		<p>
+			<a href="http://abeautifulsite.net/2008/03/jquery-file-tree/">Back to the project page</a>
+		</p>
+		
+        <div id='webdavCredentials'>
+            <label for="webdavUser">Username :</label><input id='webdavUser' type='text'>
+            <label for="webdavPassword">Password :</label><input id='webdavPassword' type='password'>
+            <label for="webdavRoot">Root :</label><input id='webdavRoot' type='text' value='/webdav/Partage/'>
+            <input type='button' value='Initiate WebDav Tree' onClick='initiateWebDavTree()'>
+        </div>
+
+		<div class="example">
+			<div id="fileTreeDemo" class="demo"></div>
+		</div>
+		
+	</body>
+	
+</html>
