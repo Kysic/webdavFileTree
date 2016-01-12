@@ -1,7 +1,7 @@
 // Webdav connector
 // By Kysic
 
-var webdavJqueryTreeConnector = (function() {
+if (jQuery) var webdavJqueryTreeConnector = (function($) {
 
     var client = new davlib.DavClient();
     var host, port, protocol, username, password;
@@ -36,25 +36,19 @@ var webdavJqueryTreeConnector = (function() {
         (in particular the xml tag prefix shortcut "D" for "DAV" and the directory contentType "httpd/unix-directory").
     */
     function extractDirContent(webdavResponse) {
-        var dirContent = { dirList: [ ], fileList: [ ] };
-        var parser = new DOMParser();
-        var webdavXML = parser.parseFromString(webdavResponse,"text/xml");
-        var responses = webdavXML.getElementsByTagName('D:response');
-
-        for (var i = 0; i < responses.length - 1; i++) {
-            var contentTypeNode = responses[i].getElementsByTagName('D:getcontenttype');
-            var contentType = contentTypeNode.length > 0
-                                     ? responses[i].getElementsByTagName('D:getcontenttype')[0].childNodes[0].nodeValue
-                                     : 'unknown';
-            var isDir = contentType == 'httpd/unix-directory';
-            var hrefValue = responses[i].getElementsByTagName('D:href')[0].childNodes[0].nodeValue;
-            var filename = decodeURI(hrefValue.replace(/^.*\//, ''));
+        var dirContent = { dirList: [ ], fileList: [ ], debug: [ ] };
+        var xmlDoc = $.parseXML(webdavResponse);
+        $(xmlDoc).find('response, D\\:response, DAV\\:response').each(function(){
+            var fileContentType = $(this).find('getcontenttype, D\\:getcontenttype, DAV\\:getcontenttype').text(); 
+            var isDir = fileContentType == 'httpd/unix-directory';
+            var fileHref = $(this).find('href, D\\:href, DAV\\:href').text(); 
+            var filename = decodeURI(fileHref.replace(/^.*\//, ''));
             if ( isDir ) {
                 dirContent.dirList.push(filename);
             } else {
                 dirContent.fileList.push(filename);
             }
-        }
+        });
         dirContent.dirList.sort();
         dirContent.fileList.sort();
         if (debug) console.log(dirContent);
@@ -108,5 +102,5 @@ var webdavJqueryTreeConnector = (function() {
 
 	return { initialize: initialize, listDir: listDir, openFile: openFile };
 
-})();
+})(jQuery);
 
