@@ -1,7 +1,7 @@
 // Webdav connector
 // By Kysic
 
-if (jQuery) var webdavJqueryTreeConnector = (function($) {
+var webdavJqueryTreeConnector = (function() {
 
     var client = new davlib.DavClient();
     var host, port, protocol, username, password;
@@ -36,7 +36,7 @@ if (jQuery) var webdavJqueryTreeConnector = (function($) {
         (in particular the xml tag prefix shortcut "D" for "DAV" and the directory contentType "httpd/unix-directory").
     */
     function extractDirContent(webdavResponse) {
-        var dirContent = { dirList: [ ], fileList: [ ], debug: [ ] };
+        var dirContent = { dirList: [ ], fileList: [ ] };
         var xmlDoc = $.parseXML(webdavResponse);
         $(xmlDoc).find('response, D\\:response, DAV\\:response').each(function(){
             var fileContentType = $(this).find('getcontenttype, D\\:getcontenttype, DAV\\:getcontenttype').text(); 
@@ -102,5 +102,5 @@ if (jQuery) var webdavJqueryTreeConnector = (function($) {
 
 	return { initialize: initialize, listDir: listDir, openFile: openFile };
 
-})(jQuery);
+})();
 
