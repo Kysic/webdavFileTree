@@ -11,8 +11,7 @@ It's in fact just a connector between two existing HTML/javascript code :
 
 ## Compatibilty
 ### Browsers
-Tested successfull only on firefox at the moment :
-- with ie, the tree works, but there is a security issue when trying to open a file with the syntax https://user:pwd@host/path/file
+Tested successfull on firefox and internet explorer 11 :
 - with chrome, there is security problem when jsdavclient lib try to set one of the request header.
 
 ## Webdav server

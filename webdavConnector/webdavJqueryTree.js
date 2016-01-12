@@ -98,7 +98,12 @@ var webdavJqueryTreeConnector = (function() {
 
     function openFile(file) {
         if (debug) console.log('openFile() - File : ' + file);
-        window.open(protocol + "://" + username + ":" + password + "@"+ host + ":" + port + encodeURI(file), '_blank');
+        try {
+            window.open(protocol + "://" + username + ":" + password + "@"+ host + ":" + port + encodeURI(file), '_blank');
+        } catch (err) {
+            console.log(err);
+            window.open(protocol + "://" + host + ":" + port + encodeURI(file), '_blank');
+        }
     }
 
 	return { initialize: initialize, listDir: listDir, openFile: openFile };
