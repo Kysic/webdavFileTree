@@ -4,28 +4,31 @@
 var webdavJqueryTreeConnector = (function() {
 
     var client = new davlib.DavClient();
-    var host, port, protocol, username, password;
+    var host, port, protocol, userName, password;
+    var dirChangeListener;
     var debug = false;
     var alertOnError = true;
 
     /**
         The constructor
     
-        host - the host name or IP
-        port - HTTP port of the host (optional, defaults to 80)
-        protocol - protocol part of URLs (optional, defaults to http)
-        username - the username for authorization (only Basic auth is supported at that time)
-        password - the password to use
+        webdavHost - the host name or IP
+        webdavPort - HTTP port of the host (optional, defaults to 80)
+        webdavProtocol - protocol part of URLs (optional, defaults to http)
+        webdavUserName - the userName for authorization (only Basic auth is supported at that time)
+        webdavPassword - the password to use
+        webdavDirChangeListener - function call with dir as argument when a new directory is opened
     */
-    function initialize(webdavHost, webdavPort, webdavProtocol, webdavUsername, webdavPassword) {
+    function initialize(webdavHost, webdavPort, webdavProtocol, webdavUserName, webdavPassword, webdavDirChangeListener) {
         if (debug) console.log('initialize() - Host=' + webdavHost + ' Port=' + webdavPort
-                               + ' Protocol=' + webdavProtocol + ' Username=' + webdavUsername);
+                               + ' Protocol=' + webdavProtocol + ' userName=' + webdavUserName);
         host = webdavHost;
         port = webdavPort;
         protocol = webdavProtocol;
-        username = webdavUsername;
+        userName = webdavUserName;
         password = webdavPassword;
-        client.initialize(host, port, protocol, username, password);
+        dirChangeListener = webdavDirChangeListener;
+        client.initialize(host, port, protocol, userName, password);
     }
 
     /**
@@ -76,6 +79,7 @@ var webdavJqueryTreeConnector = (function() {
                 });
                 jqueryTreeReponse += '</ul>';
                 connectorCallback(jqueryTreeReponse);
+                dirChangeListener(dir);
             }
         }
     }
@@ -86,21 +90,34 @@ var webdavJqueryTreeConnector = (function() {
             client.PROPFIND(dir,  listDirCallback(dir, connectorCallback), null, 1);
         } catch (err) {
             console.log(err);
-            if (alertOnError) alert('Unable to listDir, internal error : ' + err.name + " - " + err.message);
+            if (alertOnError) alert('Unable to listDir, internal error : ' + err.name + ' - ' + err.message);
         }
     }
 
     function openFile(file) {
         if (debug) console.log('openFile() - File : ' + file);
         try {
-            window.open(protocol + "://" + username + ":" + password + "@"+ host + ":" + port + file, '_blank');
+            window.open(protocol + '://' + userName + ':' + password + '@'+ host + ':' + port + file, '_blank');
         } catch (err) {
             console.log(err);
-            window.open(protocol + "://" + host + ":" + port + file, '_blank');
+            window.open(protocol + '://' + host + ':' + port + file, '_blank');
         }
     }
 
-	return { initialize: initialize, listDir: listDir, openFile: openFile };
+    function uploadFile(remoteDir, fileName, fileData) {
+      if (debug) console.log('Upload of ' + fileName + ' in ' + remoteDir);
+      var req = new XMLHttpRequest();
+      req.open('PUT', protocol + '://' + host + ':' + port + remoteDir + fileName, true);
+      req.setRequestHeader('Authorization', 'Basic ' + btoa(userName + ':' + password));
+      req.onreadystatechange = function() {
+        if (req.readyState == 4) {
+            if (debug) console.log('Upload of ' + fileName + ' completed.');
+        }
+      };
+      req.send(fileData);
+    }
+
+    return { initialize: initialize, listDir: listDir, openFile: openFile, uploadFile: uploadFile };
 
 })();
 
