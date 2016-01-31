@@ -1,0 +1,112 @@
+BODY,
+HTML {
+	padding: 0px;
+	margin: 0px;
+}
+BODY {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	background: #EEE;
+	padding: 15px;
+}
+
+H1 {
+	font-family: Georgia, serif;
+	font-size: 20px;
+	font-weight: bold;
+    text-align: center;
+}
+
+H2 {
+	font-family: Georgia, serif;
+	font-size: 16px;
+	font-weight: bold;
+	margin: 0px;
+}
+
+.fileTree {
+	min-width: 500px;
+	min-height: 600px;
+	border-top: solid 1px #BBB;
+	border-left: solid 1px #BBB;
+	border-bottom: solid 1px #FFF;
+	border-right: solid 1px #FFF;
+	background: #FFF;
+	overflow: scroll;
+}
+
+#main {
+	margin: 15px;
+}
+
+.menu {
+	border: 1px solid #555;
+	padding: 0px;
+	border-radius: 8px;
+	background: #fafaff;
+	background: linear-gradient(to top, #f9f9ff, #fefeff);
+	text-align: center;
+    margin-bottom: 20px;
+}
+.menuTitle {
+	border-bottom: 1px solid #555;
+	border-radius: 8px 8px 0px 0px;
+	background: #ddd;
+	background: linear-gradient(to top, #ccc, #eee);
+}
+.menuContent {
+    padding: 10px;
+}
+
+.floatingMenu {
+	float: right;
+	margin: 15px;
+    width: 400px;
+    text-align: center;
+}
+.credentialsInfo {
+	font-size: 14px;
+	font-weight: bold;
+}
+
+#actionMenu {
+	display: none;
+}
+
+#overlay {
+	background-color: #000000;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0.8;
+	z-index: 90;
+	display: none;
+}
+
+#modalWindow {
+	position: absolute;
+	z-index: 100;
+	display: none;
+	background-color: #ffffff;
+}
+#modalWindowTitle {
+    padding: 0px 20px;
+}
+#modalWindowClose {
+	float: right;
+	cursor: pointer;
+	border-left: 1px solid #555;
+	padding-left: 2px;
+	padding-right: 2px;
+	font-weight: bold;
+	font-family: Verdana, sans-serif;
+	background: #f99;
+	border-radius: 0px 8px 0px 0px;
+}
+
+#modalWindowContent {
+	padding: 25px 30px 30px 30px;
+}
+

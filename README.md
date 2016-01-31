@@ -1,9 +1,10 @@
 # WebDAVFileTree
-Pure javascript lib able to display the content of a remote webdav directory on a html page.
+Pure javascript lib able to display the content of a remote webdav directory on a html page,
+and upload or delete files.
 
 ## Description
 
-It's in fact just a connector between two existing HTML/javascript code :
+It's based on two existing tools :
  - jquery.fileTree from Cory LaViska available at http://www.abeautifulsite.net/jquery-file-tree/
 (slightly modified to work with a javascript connector instead of a connector on a remote server).
  - jsdavclient, a "Low-level JavaScript WebDAV client implementation written in Javascript" from Sven vogler,
@@ -11,7 +12,7 @@ It's in fact just a connector between two existing HTML/javascript code :
 
 ## Compatibilty
 ### Browsers
-Tested successfull on firefox, chrome and internet explorer 11.
+Tested successfully on firefox, should work on chrome and internet explorer 11.
 
 ## Webdav server
 Tested with a webdav lighttpd server accessed through a apache reverse proxy, both on port 443.
