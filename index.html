@@ -18,7 +18,7 @@
         <div id='loginMenu' class='menu floatingMenu'>
             <h2 class='menuTitle'>Login</h2>
             <div class='menuContent'>
-                <form action="#" onsubmit="webdavJqueryTree.connect()">
+                <form action='#' onsubmit="webdavJqueryTree.connect(); return false">
                     <label for="webdavUser">Username :</label>
                     <input id='webdavUser' type='text' size='15' /><br />
                     <label for="webdavPassword">Password :</label>
@@ -42,7 +42,7 @@
             <div id='uploadForm' class='menu'>
                 <h2 class="menuTitle">Upload</h2>
                 <div class='menuContent'>
-                    <form action="#" onsubmit="webdavJqueryTree.uploadFiles()">
+                    <form action='#' onsubmit="webdavJqueryTree.uploadFiles(); return false">
                         <label for="filesInput">Files to upload :</label><br />
                         <input id="filesInput" type="file" multiple="multiple" /><br />
                         <label for="uploadRemoteDir">Remote directory :</label><br />
@@ -54,7 +54,7 @@
             <div id='deleteForm' class='menu'>
                 <h2 class="menuTitle">Delete</h2>
                 <div class='menuContent'>
-                    <form action="#" onsubmit="webdavJqueryTree.deleteFile()">
+                    <form action="#" onsubmit="webdavJqueryTree.deleteFile(); return false">
                         <label for="filesInput">Files to delete :</label><br />
                         <input id='fileToDelete' type='text' value='' size='40' /><br />
                         <input type='submit' value="Delete" />
