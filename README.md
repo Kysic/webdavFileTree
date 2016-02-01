@@ -12,7 +12,7 @@ It's based on two existing tools :
 
 ## Compatibilty
 ### Browsers
-Tested successfully on firefox, should work on chrome and internet explorer 11.
+Mainly tested on firefox, from time to time on chrome and internet explorer 11.
 
 ## Webdav server
 Tested with a webdav lighttpd server accessed through a apache reverse proxy, both on port 443.
