@@ -2,6 +2,10 @@
 html and javascript application able to display the content of a remote webdav directory on a html page,
 and upload or delete files.
 
+## Screenshot
+
+![Screen shot of WebDavShare interface](screenshot.png)
+
 ## Description
 
 It's based on several existing tools :
