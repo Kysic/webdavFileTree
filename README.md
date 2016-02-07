@@ -2,10 +2,6 @@
 html and javascript application able to display the content of a remote webdav directory on a html page,
 and upload or delete files.
 
-## Screenshot
-
-![Screen shot of WebDavShare interface](screenshot.png)
-
 ## Description
 
 It's based on several existing tools :
@@ -15,6 +11,10 @@ It's based on several existing tools :
  available at https://github.com/svogler (slightly modified to avoid a compatibilty problem with chrome).
  - jquery.contextmenu : http://swisnl.github.io/jQuery-contextMenu/i 
  - and, of course, jQuery : https://jquery.com/
+
+## Screenshot
+
+![Screen shot of WebDavShare interface](screenshot.png)
 
 ## Compatibilty
 ### Browsers
