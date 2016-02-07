@@ -17,7 +17,7 @@ var queryString = function () {
     return query_string;
 }();
 
-var webdavJqueryTree = (function($, webdavLayer, queryString, modalWindow) {
+var webdavUI = (function($, webdavLayer, queryString, modalWindow) {
 
     function getFormRootDir() {
         var rootDir = $('#webdavRoot').val();
@@ -26,9 +26,11 @@ var webdavJqueryTree = (function($, webdavLayer, queryString, modalWindow) {
         }
         return rootDir;
     }
+
     function removeRootDir(dir) {
         return String(dir).replace(getFormRootDir(), '');
     }
+
     function refreshFileTree() {
         $('#fileTree').fileTree({
                 root: getFormRootDir(),
@@ -39,6 +41,7 @@ var webdavJqueryTree = (function($, webdavLayer, queryString, modalWindow) {
                 ajaxConnector: listDir
             }, openFile);
     }
+
     function connect() {
         modalWindow.show('Trying to connect to webdav server, please wait...', 'Loading', true);
         webdavLayer.connect({
@@ -73,9 +76,7 @@ var webdavJqueryTree = (function($, webdavLayer, queryString, modalWindow) {
         webdavLayer.listDir({
             dir: dir,
             success: function(dirContent) {
-                $('#directoryToCreate').val(removeRootDir(dir));
                 $('#uploadRemoteDir').val(removeRootDir(dir));
-                $('#fileToDelete').val(removeRootDir(dir));
                 var jqueryTreeReponse = '<ul class="jqueryFileTree" style="display: none;">';
                 dirContent.dirList.forEach(function(childDirName) {
                     jqueryTreeReponse += '<li class="directory collapsed"><a href="#" rel="' +
@@ -101,9 +102,11 @@ var webdavJqueryTree = (function($, webdavLayer, queryString, modalWindow) {
         webdavLayer.openFile(file);
     }
 
-    function createDir() {
-        if (!$('#directoryToCreate').val()) return;
-        var dirToCreate = getFormRootDir() + $('#directoryToCreate').val();
+    function createDir(parentDir) {
+        var newDirName = prompt('New directory name : ');
+        if (!newDirName) return;
+        var dirToCreate = parentDir + newDirName;
+        modalWindow.show('Creating dir, please wait...', 'Loading', true);
         webdavLayer.createDir({
             dir: dirToCreate,
             success: function() {
@@ -111,8 +114,29 @@ var webdavJqueryTree = (function($, webdavLayer, queryString, modalWindow) {
                 modalWindow.close();
             },
             error: function(errorCode, errorMsg) {
-                modalWindow.show('Unable to create dir ' + $('#directoryToCreate').val() + ':<br />'
+                modalWindow.show('Unable to create dir ' + dirToCreate + ':<br />'
                                  + errorCode + ' : ' + errorMsg, 'Create directory error');
+            }
+        });
+    }
+
+    function moveFile(fileSrc, dirDest) {
+        if (!fileSrc) {
+            modalWindow.show('No file in clipboard to paste', 'Move file error');
+            return;
+        }
+        var fileDest = dirDest + fileSrc.replace(/\/$/, '').replace(/^.*\//, '');
+        modalWindow.show('Moving file, please wait...', 'Loading', true);
+        webdavLayer.moveFile({
+            src: fileSrc,
+            dest: fileDest,
+            success: function() {
+                refreshFileTree();
+                modalWindow.close();
+            },
+            error: function(errorCode, errorMsg) {
+                modalWindow.show('Unable to move file ' + fileSrc + ' to ' + fileDest + ':<br />'
+                                 + errorCode + ' : ' + errorMsg, 'Move file error');
             }
         });
     }
@@ -145,40 +169,90 @@ var webdavJqueryTree = (function($, webdavLayer, queryString, modalWindow) {
         }
     }
 
-    function deleteFile() {
-        if (!$('#fileToDelete').val()) return;
-        var deletedFile = getFormRootDir() + $('#fileToDelete').val();
-        if (confirm('Delete ' + deletedFile + ' ?')) {
+    function deleteFile(fileToDelete) {
+        if (confirm('Delete ' + fileToDelete + ' ?')) {
             modalWindow.show('Deleting file, please wait...', 'Loading', true);
             webdavLayer.deleteFile({
-                file: deletedFile,
+                file: fileToDelete,
                 success: function() {
                     refreshFileTree();
                     modalWindow.close();
                 },
                 error: function(errorCode, errorMsg) {
-                    modalWindow.show('Unable to delete file ' + $('#fileToDelete').val() + ':<br />'
+                    modalWindow.show('Unable to delete file ' + fileToDelete + ':<br />'
                                      + errorCode + ' : ' + errorMsg, 'Delete file error');
                 }
             });
         }
     }
 
+    function clearClipboard() {
+        $('#fileCut').val('');
+    }
+
+    function pasteInRootDir() {
+        moveFile($('#fileCut').val(), getFormRootDir());
+    }
+
     // Load get param from URL. 
     $( document ).ready(function() {
         if (queryString.webdavUser) $('#webdavUser').val(queryString.webdavUser);
         if (queryString.webdavRoot) $('#webdavRoot').val(queryString.webdavRoot);
-        // If you want to indicate the webdav password in URL, be aware it s not safe.
-        // if (QueryString.webdavPassword) document.getElementById('webdavPassword').value = QueryString.webdavPassword;
-        if (queryString.webdavUser && queryString.webdavPassword && queryString.webdavRoot) {
-            connect();
+    });
+
+    // Configure right clic menu
+    function rightMenuCallback(key, options) {
+        var fileRef = this.context.rel;
+        switch(key) {
+            case 'open':
+                openFile(fileRef);
+                break;
+            case 'createDir':
+                createDir(fileRef);
+                break;
+            case 'cut':
+                $('#fileCut').val(fileRef);
+                break;
+            case 'paste':
+                moveFile($('#fileCut').val(), fileRef);
+                break;
+            case 'delete':
+                deleteFile(fileRef);
+                break;
         }
+    }
+    $( document ).ready(function() {
+        $.contextMenu({
+            selector: '.directory>a', 
+            callback: rightMenuCallback,
+            items: {
+                'createDir': {name: 'New dir', icon: 'edit'},
+                /*'cut': {name: 'Cut', icon: 'cut'},*/
+                'paste': {name: 'Paste', icon: 'paste'},
+                'sep': '---------',
+                'delete': {name: 'Delete', icon: 'delete'}
+            }
+        });
+        $.contextMenu({
+            selector: '.file>a', 
+            callback: rightMenuCallback,
+            items: {
+                'open': {name: 'Open', icon: 'edit'},
+                'cut': {name: 'Cut', icon: 'cut'},
+                /*'copy': {name: 'Copy', icon: 'copy'},*/
+                'sep': '---------',
+                'delete': {name: 'Delete', icon: 'delete'}
+            }
+        });
     });
 
     return {
         connect: connect,
         disconnect: disconnect,
         refreshFileTree: refreshFileTree,
+        clearClipboard: clearClipboard,
+        pasteInRootDir: pasteInRootDir,
+        openFile: openFile,
         createDir: createDir,
         uploadFiles: uploadFiles,
         deleteFile: deleteFile

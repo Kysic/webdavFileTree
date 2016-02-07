@@ -4,15 +4,17 @@ and upload or delete files.
 
 ## Description
 
-It's based on two existing tools :
+It's based on several existing tools :
  - jquery.fileTree from Cory LaViska available at http://www.abeautifulsite.net/jquery-file-tree/
 (slightly modified to work with a javascript connector instead of a connector on a remote server).
  - jsdavclient, a "Low-level JavaScript WebDAV client implementation written in Javascript" from Sven vogler,
  available at https://github.com/svogler (slightly modified to avoid a compatibilty problem with chrome).
+ - jquery.contextmenu : http://swisnl.github.io/jQuery-contextMenu/i 
+ - and, of course, jQuery : https://jquery.com/
 
 ## Compatibilty
 ### Browsers
-Mainly tested on firefox, from time to time on chrome and internet explorer 11.
+Mainly tested on firefox, compatible with chrome and internet explorer 11.
 
 ## Webdav server
 Tested with a webdav lighttpd server accessed through a apache reverse proxy, both on port 443.
