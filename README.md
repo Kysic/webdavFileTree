@@ -1,5 +1,5 @@
 # WebDAVFileTree
-Pure javascript lib able to display the content of a remote webdav directory on a html page,
+html and javascript application able to display the content of a remote webdav directory on a html page,
 and upload or delete files.
 
 ## Description
