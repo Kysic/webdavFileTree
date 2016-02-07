@@ -30,7 +30,7 @@ var webdavJqueryTree = (function($, webdavLayer, queryString, modalWindow) {
         return String(dir).replace(getFormRootDir(), '');
     }
     function refreshFileTree() {
-		$('#fileTree').fileTree({
+        $('#fileTree').fileTree({
                 root: getFormRootDir(),
                 folderEvent: 'click',
                 expandSpeed: 750,
@@ -73,7 +73,9 @@ var webdavJqueryTree = (function($, webdavLayer, queryString, modalWindow) {
         webdavLayer.listDir({
             dir: dir,
             success: function(dirContent) {
+                $('#directoryToCreate').val(removeRootDir(dir));
                 $('#uploadRemoteDir').val(removeRootDir(dir));
+                $('#fileToDelete').val(removeRootDir(dir));
                 var jqueryTreeReponse = '<ul class="jqueryFileTree" style="display: none;">';
                 dirContent.dirList.forEach(function(childDirName) {
                     jqueryTreeReponse += '<li class="directory collapsed"><a href="#" rel="' +
@@ -97,6 +99,22 @@ var webdavJqueryTree = (function($, webdavLayer, queryString, modalWindow) {
 
     function openFile(file) {
         webdavLayer.openFile(file);
+    }
+
+    function createDir() {
+        if (!$('#directoryToCreate').val()) return;
+        var dirToCreate = getFormRootDir() + $('#directoryToCreate').val();
+        webdavLayer.createDir({
+            dir: dirToCreate,
+            success: function() {
+                refreshFileTree();
+                modalWindow.close();
+            },
+            error: function(errorCode, errorMsg) {
+                modalWindow.show('Unable to create dir ' + $('#directoryToCreate').val() + ':<br />'
+                                 + errorCode + ' : ' + errorMsg, 'Create directory error');
+            }
+        });
     }
 
     function uploadFiles() {
@@ -157,12 +175,13 @@ var webdavJqueryTree = (function($, webdavLayer, queryString, modalWindow) {
         }
     });
 
-	return {
-		connect: connect,
+    return {
+        connect: connect,
         disconnect: disconnect,
         refreshFileTree: refreshFileTree,
+        createDir: createDir,
         uploadFiles: uploadFiles,
         deleteFile: deleteFile
-	};
+    };
 
 })(jQuery, webdavLayer, queryString, modalWindow);

@@ -39,6 +39,16 @@
                     <input type='button' value='Disconnect' onClick='webdavJqueryTree.disconnect()' />
                 </div>
             </div>
+            <div id='createDirForm' class='menu'>
+                <h2 class="menuTitle">Create Directory</h2>
+                <div class='menuContent'>
+                    <form action='#' onsubmit="webdavJqueryTree.createDir(); return false">
+                        <label for="directoryToCreate">Directory to create :</label><br />
+                        <input id='directoryToCreate' type='text' value='' size='40' /><br />
+                        <input type='submit' value="Create" />
+                    </form>
+                </div>
+            </div>
             <div id='uploadForm' class='menu'>
                 <h2 class="menuTitle">Upload</h2>
                 <div class='menuContent'>
@@ -46,7 +56,7 @@
                         <label for="filesInput">Files to upload :</label><br />
                         <input id="filesInput" type="file" multiple="multiple" /><br />
                         <label for="uploadRemoteDir">Remote directory :</label><br />
-                        <input id='uploadRemoteDir' type='text' value='/' size='40' /><br />
+                        <input id='uploadRemoteDir' type='text' value='' size='40' /><br />
                         <input type='submit' value="Upload" />
                     </form>
                 </div>
@@ -62,8 +72,8 @@
                 </div>
             </div>
         </div>
-		<div id="main">
-			<div id="fileTree" class="fileTree"></div>
+		<div id='main'>
+			<div id='fileTree' class='fileTree'></div>
 		</div>
 	    <div id="overlay"></div>
 	    <div id="modalWindow" class='menu'>

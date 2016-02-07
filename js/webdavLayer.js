@@ -191,8 +191,8 @@ var webdavLayer = (function($, davlib) {
     }
 
     /**
-      * file
-      */
+     * file
+     */
     function openFile(file) {
         if (debug) console.log('openFile() - File : ' + file);
         try {
