@@ -43,19 +43,23 @@ var webdavLayer = (function($, davlib) {
         It will certainly need some corrections to work with another webdav server or configuration
         (in particular the xml tag prefix shortcut "D" for "DAV" and the directory contentType "httpd/unix-directory").
     */
-    function extractDirContent(webdavResponse) {
+    function extractDirContent(webdavResponse, browsedDirectory) {
         if (debug) console.log('extractDirContent() - WebdavResponse : ' + webdavResponse);
         var dirContent = { dirList: [ ], fileList: [ ] };
         var xmlDoc = $.parseXML(webdavResponse);
+        var filterOnlyDirectoryContent = new RegExp(browsedDirectory + "/?[^/]+");
         $(xmlDoc).find('response, D\\:response, DAV\\:response').each(function(){
             var fileContentType = $(this).find('getcontenttype, D\\:getcontenttype, DAV\\:getcontenttype').text(); 
             var isDir = fileContentType == 'httpd/unix-directory';
-            var fileHref = $(this).find('href, D\\:href, DAV\\:href').text(); 
-            var filename = decodeURI(fileHref.replace(/^.*\//, ''));
-            if ( isDir ) {
-                dirContent.dirList.push(filename);
-            } else {
-                dirContent.fileList.push(filename);
+            var fileHref = $(this).find('href, D\\:href, DAV\\:href').text();
+            var file = decodeURI(fileHref);
+            if (file.match(filterOnlyDirectoryContent)) {
+                var filename = file.replace(/^.*\/([^\/]+)\/*$/, '$1')
+                if ( isDir ) {
+                    dirContent.dirList.push(filename);
+                } else {
+                    dirContent.fileList.push(filename);
+                }
             }
         });
         dirContent.dirList.sort();
@@ -64,11 +68,11 @@ var webdavLayer = (function($, davlib) {
         return dirContent;
     }
 
-    function responseHandler(p, expectedStatus, contentWrapper) {
+    function responseHandler(p, expectedStatus, contentWrapper, contentWrapperArg) {
         return function(status, statusstr, content) {
             if (status == expectedStatus) {
                 if (p.success) {
-                    if (contentWrapper) p.success(contentWrapper(content));
+                    if (contentWrapper) p.success(contentWrapper(content, contentWrapperArg));
                     else p.success(content);
                 }
             } else {
@@ -97,7 +101,7 @@ var webdavLayer = (function($, davlib) {
     function listDir(p) {
         if (debug) console.log('listDir() : dir=' + p.dir);
         try {
-            client.PROPFIND(p.dir, responseHandler(p, 207, extractDirContent), null, 1);
+            client.PROPFIND(p.dir, responseHandler(p, 207, extractDirContent, p.dir), null, 1);
         } catch (err) {
             catchCallError(err, p.error);
         }
