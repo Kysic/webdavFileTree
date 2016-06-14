@@ -23,3 +23,6 @@ Mainly tested on firefox, compatible with chrome and internet explorer 11.
 ## Webdav server
 Tested with a webdav lighttpd server accessed through a apache reverse proxy, both on port 443.
 The apache server also host the html pages, so there is no cross domain request from client point of view.
+
+## License
+GNU GPL v3 : https://www.gnu.org/licenses/gpl-3.0.html
