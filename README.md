@@ -9,7 +9,7 @@ It's based on several existing tools :
 (slightly modified to work with a javascript connector instead of a connector on a remote server).
  - jsdavclient, a "Low-level JavaScript WebDAV client implementation written in Javascript" from Sven vogler,
  available at https://github.com/svogler (slightly modified to avoid a compatibilty problem with chrome).
- - jquery.contextmenu : http://swisnl.github.io/jQuery-contextMenu/i 
+ - jquery.contextmenu : http://swisnl.github.io/jQuery-contextMenu/
  - and, of course, jQuery : https://jquery.com/
 
 ## Screenshot
